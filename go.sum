@@ -22,8 +22,8 @@ github.com/hashicorp/go-cleanhttp v0.5.2/go.mod h1:kO/YDlP8L1346E6Sodw+PrpBSV4/S
 github.com/hashicorp/go-hclog v0.16.1/go.mod h1:whpDNt7SSdeAju8AWKIWsul05p54N/39EeqMAyrmvFQ=
 github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
 github.com/hashicorp/go-uuid v1.0.2/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
-github.com/heikkilamarko/goutils v1.0.23 h1:YSherNJFlK87iO+LuLhDqPFKJF4elLHBPckDY88eOKc=
-github.com/heikkilamarko/goutils v1.0.23/go.mod h1:IfjcKMhqr1dgcQXvVtofnKZaAFYzFDwkrSfdxvBlxh4=
+github.com/heikkilamarko/goutils v1.0.24 h1:ZykuAQAvNKR5T3MD6XI5xVsPSegBeP0g72s/UI34PO4=
+github.com/heikkilamarko/goutils v1.0.24/go.mod h1:IfjcKMhqr1dgcQXvVtofnKZaAFYzFDwkrSfdxvBlxh4=
 github.com/joho/godotenv v1.3.0 h1:Zjp+RcGpHhGlrMbJzXTrZZPrWj+1vfm90La1wgB6Bhc=
 github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqxOKXbg=
 github.com/mattn/go-colorable v0.1.4/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
