@@ -5,8 +5,8 @@ go 1.17
 require (
 	github.com/gorilla/mux v1.8.0
 	github.com/heikkilamarko/goutils v1.0.24
-	github.com/joho/godotenv v1.3.0
-	github.com/rs/zerolog v1.24.0
+	github.com/joho/godotenv v1.4.0
+	github.com/rs/zerolog v1.25.0
 )
 
 require (
