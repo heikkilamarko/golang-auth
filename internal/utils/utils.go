@@ -38,12 +38,12 @@ func GetRolesAzure(token map[string]interface{}) []string {
 	return roles
 }
 
-func GetRolesKeycloak(token map[string]interface{}) []string {
+func GetRolesKeycloak(resource string, token map[string]interface{}) []string {
 	var roles []string
 
 	switch v1 := token["resource_access"].(type) {
 	case map[string]interface{}:
-		switch v2 := v1["api-gateway"].(type) {
+		switch v2 := v1[resource].(type) {
 		case map[string]interface{}:
 			switch v3 := v2["roles"].(type) {
 			case []interface{}:

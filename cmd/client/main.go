@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/clientcredentials"
 )
 
 type Token struct {
@@ -21,47 +23,30 @@ func main() {
 
 	url := os.Getenv("API_URL")
 
-	callAPI(url+"/api/public", "")
+	callAPI(url+"/api/public", nil)
 	callAPI(url+"/api/private", getToken())
 }
 
-func getToken() string {
-	url := os.Getenv("AUTH_TOKEN_URL")
+func getToken() *oauth2.Token {
+	conf := clientcredentials.Config{
+		TokenURL:     os.Getenv("AUTH_TOKEN_URL"),
+		ClientID:     os.Getenv("AUTH_CLIENT_ID"),
+		ClientSecret: os.Getenv("AUTH_CLIENT_SECRET"),
+		Scopes:       strings.Split(os.Getenv("AUTH_SCOPE"), " "),
+	}
 
-	payload := strings.NewReader(fmt.Sprintf(
-		"grant_type=client_credentials&client_id=%s&client_secret=%s&scope=%s",
-		os.Getenv("AUTH_CLIENT_ID"),
-		os.Getenv("AUTH_CLIENT_SECRET"),
-		os.Getenv("AUTH_SCOPE"),
-	))
-
-	req, err := http.NewRequest("POST", url, payload)
+	token, err := conf.Token(context.Background())
 	checkErr(err)
 
-	req.Header.Add("content-type", "application/x-www-form-urlencoded")
-
-	res, err := http.DefaultClient.Do(req)
-	checkErr(err)
-
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	checkErr(err)
-
-	var token Token
-
-	err = json.Unmarshal(body, &token)
-	checkErr(err)
-
-	return token.AccessToken
+	return token
 }
 
-func callAPI(url, token string) {
+func callAPI(url string, token *oauth2.Token) {
 	req, err := http.NewRequest("GET", url, nil)
 	checkErr(err)
 
-	if token != "" {
-		req.Header.Add("authorization", fmt.Sprintf("Bearer %s", token))
+	if token != nil {
+		token.SetAuthHeader(req)
 	}
 
 	res, err := http.DefaultClient.Do(req)

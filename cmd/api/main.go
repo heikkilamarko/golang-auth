@@ -67,7 +67,7 @@ func handlePrivate(w http.ResponseWriter, r *http.Request) {
 	case "azure":
 		roles = utils.GetRolesAzure(token)
 	case "keycloak":
-		roles = utils.GetRolesKeycloak(token)
+		roles = utils.GetRolesKeycloak("todo-api", token)
 	default:
 		fmt.Printf("invalid auth provider: %s", ap)
 	}
