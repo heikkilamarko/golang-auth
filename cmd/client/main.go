@@ -13,10 +13,6 @@ import (
 	"golang.org/x/oauth2/clientcredentials"
 )
 
-type Token struct {
-	AccessToken string `json:"access_token"`
-}
-
 func main() {
 	err := godotenv.Load("client.env")
 	checkErr(err)
