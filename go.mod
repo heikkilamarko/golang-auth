@@ -7,7 +7,7 @@ require (
 	github.com/heikkilamarko/goutils v1.0.25
 	github.com/joho/godotenv v1.4.0
 	github.com/rs/zerolog v1.26.0
-	golang.org/x/oauth2 v0.0.0-20211028175245-ba495a64dcb5
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 )
 
 require (
