@@ -1,13 +1,13 @@
 module goauth
 
-go 1.17
+go 1.18
 
 require (
 	github.com/gorilla/mux v1.8.0
 	github.com/heikkilamarko/goutils v1.0.25
 	github.com/joho/godotenv v1.4.0
 	github.com/rs/zerolog v1.26.1
-	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b
+	golang.org/x/oauth2 v0.0.0-20220309155454-6242fa91716a
 )
 
 require (
