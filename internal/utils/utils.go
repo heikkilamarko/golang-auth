@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-
-	"github.com/heikkilamarko/goutils"
 )
 
 type ctxKey string
@@ -17,12 +15,13 @@ func GetToken(r *http.Request) map[string]interface{} {
 }
 
 func GetUserName(token map[string]interface{}) string {
-	switch v := token["name"].(type) {
-	case string:
-		return v
-	default:
-		return ""
+	for _, name := range []string{"name", "preferred_username"} {
+		switch v := token[name].(type) {
+		case string:
+			return v
+		}
 	}
+	return ""
 }
 
 func GetRolesAzure(token map[string]interface{}) []string {
@@ -57,8 +56,16 @@ func GetRolesKeycloak(resource string, token map[string]interface{}) []string {
 	return roles
 }
 
+func TokenFromHeader(r *http.Request) string {
+	a := r.Header.Get("Authorization")
+	if 7 < len(a) && strings.ToUpper(a[0:6]) == "BEARER" {
+		return a[7:]
+	}
+	return ""
+}
+
 func LogToken(r *http.Request) {
-	token := goutils.TokenFromHeader(r)
+	token := TokenFromHeader(r)
 	if token == "" {
 		token = "empty token"
 	}

@@ -8,9 +8,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
-	"github.com/heikkilamarko/goutils"
-	"github.com/heikkilamarko/goutils/middleware"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
 )
@@ -26,32 +25,30 @@ func main() {
 		Timestamp().
 		Logger()
 
-	jwtConfig := &middleware.JWTConfig{
+	jwtConfig := &utils.JWTConfig{
 		Issuer:   os.Getenv("AUTH_ISSUER"),
 		Iss:      os.Getenv("AUTH_CLAIM_ISS"),
 		Aud:      []string{os.Getenv("AUTH_CLAIM_AUD")},
 		TokenKey: utils.TokenKey,
+		Logger:   &logger,
 	}
 
-	r := mux.NewRouter()
+	router := chi.NewRouter()
 
-	r.Use(
-		middleware.Logger(&logger),
-		middleware.RequestLogger(),
-		middleware.ErrorRecovery(),
-	)
+	router.Use(middleware.Recoverer)
 
-	r.HandleFunc("/api/public", handlePublic).Methods("GET")
+	router.Get("/api/public", handlePublic)
 
-	s := r.PathPrefix("/api/private").Subrouter()
-	s.Use(middleware.JWT(context.Background(), jwtConfig))
-	s.HandleFunc("", handlePrivate).Methods("GET")
+	router.Route("/api/private", func(r chi.Router) {
+		r.Use(utils.JWT(context.Background(), jwtConfig))
+		r.Get("/", handlePrivate)
+	})
 
-	log.Fatal(http.ListenAndServe(":8090", r))
+	log.Fatal(http.ListenAndServe(":8090", router))
 }
 
 func handlePublic(w http.ResponseWriter, r *http.Request) {
-	goutils.WriteOK(w, "Hello from the public endpoint!", nil)
+	utils.WriteResponse(w, http.StatusOK, utils.NewDataResponse("Hello from the public endpoint!", nil))
 }
 
 func handlePrivate(w http.ResponseWriter, r *http.Request) {
@@ -67,7 +64,7 @@ func handlePrivate(w http.ResponseWriter, r *http.Request) {
 	case "azure":
 		roles = utils.GetRolesAzure(token)
 	case "keycloak":
-		roles = utils.GetRolesKeycloak("todo-api", token)
+		roles = utils.GetRolesKeycloak(os.Getenv("AUTH_CLAIM_AUD"), token)
 	default:
 		fmt.Printf("invalid auth provider: %s", ap)
 	}
@@ -78,7 +75,7 @@ func handlePrivate(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("  - %s\n", role)
 	}
 
-	goutils.WriteOK(w, token, nil)
+	utils.WriteResponse(w, http.StatusOK, utils.NewDataResponse(token, nil))
 }
 
 func checkErr(err error) {
