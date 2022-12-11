@@ -39,10 +39,9 @@ func main() {
 
 	router.Get("/api/public", handlePublic)
 
-	router.Route("/api/private", func(r chi.Router) {
-		r.Use(utils.JWT(context.Background(), jwtConfig))
-		r.Get("/", handlePrivate)
-	})
+	router.
+		With(utils.JWT(context.Background(), jwtConfig)).
+		Get("/api/private", handlePrivate)
 
 	log.Fatal(http.ListenAndServe(":8090", router))
 }
