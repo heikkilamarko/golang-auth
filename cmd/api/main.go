@@ -11,26 +11,29 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	"github.com/rs/zerolog"
+	"golang.org/x/exp/slog"
 )
 
 func main() {
 	err := godotenv.Load("api.env")
 	checkErr(err)
 
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	opts := &slog.HandlerOptions{
+		Level: slog.LevelInfo,
+	}
 
-	logger := zerolog.New(os.Stderr).
-		With().
-		Timestamp().
-		Logger()
+	handler := slog.NewJSONHandler(os.Stderr, opts)
 
-	jwtConfig := &utils.JWTConfig{
-		Issuer:   os.Getenv("AUTH_ISSUER"),
-		Iss:      os.Getenv("AUTH_CLAIM_ISS"),
-		Aud:      []string{os.Getenv("AUTH_CLAIM_AUD")},
-		TokenKey: utils.TokenKey,
-		Logger:   &logger,
+	logger := slog.New(handler)
+
+	slog.SetDefault(logger)
+
+	jwtConfig := &utils.JWTMiddlewareConfig{
+		Issuer:     os.Getenv("AUTH_ISSUER"),
+		Iss:        os.Getenv("AUTH_CLAIM_ISS"),
+		Aud:        []string{os.Getenv("AUTH_CLAIM_AUD")},
+		ContextKey: utils.TokenKey,
+		Logger:     logger,
 	}
 
 	router := chi.NewRouter()
@@ -40,7 +43,7 @@ func main() {
 	router.Get("/api/public", handlePublic)
 
 	router.
-		With(utils.JWT(context.Background(), jwtConfig)).
+		With(utils.JWTMiddleware(context.Background(), jwtConfig)).
 		Get("/api/private", handlePrivate)
 
 	log.Fatal(http.ListenAndServe(":8090", router))

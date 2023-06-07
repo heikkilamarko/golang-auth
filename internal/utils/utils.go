@@ -10,11 +10,11 @@ type ctxKey string
 
 var TokenKey = ctxKey("token")
 
-func GetToken(r *http.Request) map[string]interface{} {
-	return r.Context().Value(TokenKey).(map[string]interface{})
+func GetToken(r *http.Request) map[string]any {
+	return r.Context().Value(TokenKey).(map[string]any)
 }
 
-func GetUserName(token map[string]interface{}) string {
+func GetUserName(token map[string]any) string {
 	for _, name := range []string{"name", "preferred_username"} {
 		switch v := token[name].(type) {
 		case string:
@@ -24,11 +24,11 @@ func GetUserName(token map[string]interface{}) string {
 	return ""
 }
 
-func GetRolesAzure(token map[string]interface{}) []string {
+func GetRolesAzure(token map[string]any) []string {
 	var roles []string
 
 	switch v := token["roles"].(type) {
-	case []interface{}:
+	case []any:
 		for _, role := range v {
 			roles = append(roles, role.(string))
 		}
@@ -37,15 +37,15 @@ func GetRolesAzure(token map[string]interface{}) []string {
 	return roles
 }
 
-func GetRolesKeycloak(resource string, token map[string]interface{}) []string {
+func GetRolesKeycloak(resource string, token map[string]any) []string {
 	var roles []string
 
 	switch v1 := token["resource_access"].(type) {
-	case map[string]interface{}:
+	case map[string]any:
 		switch v2 := v1[resource].(type) {
-		case map[string]interface{}:
+		case map[string]any:
 			switch v3 := v2["roles"].(type) {
-			case []interface{}:
+			case []any:
 				for _, role := range v3 {
 					roles = append(roles, role.(string))
 				}
