@@ -2,10 +2,10 @@ package utils
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 
 	"github.com/hashicorp/cap/jwt"
-	"golang.org/x/exp/slog"
 )
 
 type JWTMiddlewareConfig struct {

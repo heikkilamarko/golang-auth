@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"goauth/internal/utils"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	"golang.org/x/exp/slog"
 )
 
 func main() {
